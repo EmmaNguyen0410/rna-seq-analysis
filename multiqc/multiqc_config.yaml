@@ -1,0 +1,27 @@
+title: "Nextflow RNA-seq demo"
+subtitle: "A pipeline for quantification of genomic features from short read data"
+
+report_header_info:
+    - Contact E-mail: 'paolo.ditommaso@gmail.com'
+    - Application Type: 'RNA-seq'
+    - Project Type: 'Nextflow demo'
+
+custom_logo_url: 'https://www.nextflow.io'
+custom_logo_title: 'Center for Genomic Regulation'
+
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/90/67f54510580f00af7c0f47a9f0d2d7/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/99/077b69277f39383ffc5c25510612bf/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/ab/4548e66d475014b8f0d333cc1d00ca/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/2a/306b0b932d2ff7aa7a082f6a481703/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/e1/2543a9a7f0abcf05836e0f6c7d16e3/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/c2/0979a5942711f516dc64236cd40261/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/ef/1fdb40871109842a2f075c8b5bf8c2/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/e9/52964cb9dc0394484a08becdc997d3/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/6f/480d9dca3985504660ff67edb68057/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/1f/476669d9e71a4d5d42dd41bc5fd369/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/54/e002cd0950e2166353d4cb42142a36/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/93/af480a7cfbb6d90676afd800967420/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/07/da971b4a69be3a05dc64ce30576d10/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/07/da971b4a69be3a05dc64ce30576d10/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/07/da971b4a69be3a05dc64ce30576d10/multiqc/logo.png
+custom_logo: /Users/nguyenthao/Desktop/Data/UTS/TranLab/speedx/code/RNA-seq-2/work/07/da971b4a69be3a05dc64ce30576d10/multiqc/logo.png

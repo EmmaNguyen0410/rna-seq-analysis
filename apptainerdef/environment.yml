@@ -1,0 +1,17 @@
+name: speedx-rnaseq
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- bioconda::bioconductor-deseq
+- bioconda::bowtie2
+- bioconda::cutadapt
+- bioconda::fastqc
+- bioconda::htseq
+- bioconda::samtools
+- r-base
+- r-pheatmap
+- r-rcolorbrewer
+- r-biocmanager
+- bioconductor-deseq2
+- bioconductor-apeglm
