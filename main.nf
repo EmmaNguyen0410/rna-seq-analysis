@@ -1,37 +1,15 @@
 #!/usr/bin/env nextflow
 
 params.outdir = "results"
-params.fastq = "$baseDir/data/test/*_{1,2}.fq"
-// params.fastq = "$baseDir/data/test/*.fq"
-params.multiqc = "$baseDir/multiqc"
+params.fastq = "$baseDir/data/ggal/*_{1,2}.fq"
 params.ref = "$baseDir/data/ggal/ggal_1_48850000_49020000.Ggal71.500bpflank.fa"
 params.gff = "$baseDir/data/ggal/ggal_1_48850000_49020000.bed.gff"
 params.script = "$baseDir/bin/deseq2.R"
 
-// process FASTQC {
-//     memory '32 GB'
-//     cpus 4
-//     tag "FASTQC on $sample_id"
-//     conda 'bioconda::fastqc=0.12.1'
-//     publishDir "$params.outdir/fastqc", mode: 'copy'
-
-//     input:
-//     tuple val(sample_id), path(reads)
-
-//     output:
-//     path "fastqc_${sample_id}_logs", emit: logs
-
-//     script:
-//     """
-//     mkdir fastqc_${sample_id}_logs
-//     fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
-//     """
-// }
-
 process FASTQC {
-    memory '4 GB'
+    memory '2 GB'
     cpus 2
-    tag "FASTQC on"
+    tag "FASTQC on $sample_id"
     conda 'bioconda::fastqc=0.12.1'
     publishDir "$params.outdir/fastqc", mode: 'copy'
 
@@ -48,27 +26,8 @@ process FASTQC {
     """
 }
 
-// process MULTIQC {
-//     tag "MultiQC $sample_id"
-//     conda 'bioconda::multiqc=1.25'
-//     publishDir "$params.outdir/multiqc", mode:'copy'
-
-//     input: 
-//     path '*'
-//     path config
-
-//     output:
-//     path 'multiqc_report.html', emit: report
-
-//     script:
-//     """
-//     echo "custom_logo: ./multiqc/logo.png" >> ./multiqc/multiqc_config.yaml
-//     multiqc -o multiqc_report.html .
-//     """
-// }
-
 process TRIMMING {
-    memory '32 GB'
+    memory '4 GB'
     cpus 8
     tag "Trimming $sample_id"
     conda 'bioconda::cutadapt=4.9'
@@ -87,7 +46,7 @@ process TRIMMING {
 }
 
 process MAPPING {
-    memory '32 GB'
+    memory '4 GB'
     cpus 8
     tag "Mapping $sample_id"
     conda 'bioconda::bowtie2=2.5.4 bioconda::samtools=1.21'
@@ -112,8 +71,7 @@ process MAPPING {
 }
 
 process QUANTIFICATION {
-    memory '32 GB'
-    cpus 8    
+    memory '16 GB' 
     tag "Quantifying $sample_id"
     conda 'bioconda::htseq=2.0.5'
     publishDir "$params.outdir/quantification", mode: 'copy'
@@ -128,13 +86,11 @@ process QUANTIFICATION {
     script:
     """
     samtools sort -n -o mapped_${sample_id}_sorted.bam ${bam} 
-    htseq-count -n 3 -f bam -r name -m union -s reverse -t exon -i gene_id mapped_${sample_id}_sorted.bam ${gff} > counts_${sample_id}.txt
+    htseq-count -n 2 -f bam -r name -m union -s reverse -t exon -i gene_id mapped_${sample_id}_sorted.bam ${gff} > counts_${sample_id}.txt
     """
 }
 
 process DIFFERENTIAL_EXPRESSION {
-    memory '32 GB'
-    cpus 3
     tag "Differential Expression"
     conda 'bioconda::deseq2=1.42.0'
     publishDir "$params.outdir/deseq2", mode: 'copy'
@@ -155,18 +111,16 @@ process DIFFERENTIAL_EXPRESSION {
 
 workflow {
     read_pairs_ch = Channel.fromFilePairs(params.fastq, checkIfExists: true)
-    //read_pairs_ch = Channel.fromPath(params.fastq)
+
     FASTQC(read_pairs_ch)
-    //MULTIQC(FASTQC.out, params.multiqc)
-    // TRIMMING(read_pairs_ch)
-    // MAPPING(params.ref, TRIMMING.out)
-    // QUANTIFICATION(params.gff, MAPPING.out)
+    
+    TRIMMING(read_pairs_ch)
+    MAPPING(params.ref, TRIMMING.out)
+    QUANTIFICATION(params.gff, MAPPING.out)
 
-    // QUANTIFICATION.out
-    // .collect()
-    // .set{ htseq_outputs }
+    QUANTIFICATION.out
+    .collect()
+    .set{ htseq_outputs }
 
-    // htseq_outputs = ['/shared/homes/162557/home/uts/speedx/RNA-seq-2/data/quantification/counts_ggal_gut_treated.txt', '/shared/homes/162557/home/uts/speedx/RNA-seq-2/data/quantification/counts_ggal_liver_untreated.txt', '/shared/homes/162557/home/uts/speedx/RNA-seq-2/data/quantification/counts_ggal_lung_treated.txt', '/shared/homes/162557/home/uts/speedx/RNA-seq-2/data/quantification/counts_ggal_spleen_untreated.txt']
-
-    // DIFFERENTIAL_EXPRESSION(htseq_outputs)
+    DIFFERENTIAL_EXPRESSION(htseq_outputs)
 }
