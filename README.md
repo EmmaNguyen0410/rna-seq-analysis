@@ -58,7 +58,7 @@ __-s reverse__: The second read has to be on the same strand and the first read 
 
 There is a need to know approximately what resources our jobs will need to configure _cpus_ and _memory_ for each PROCESS in Nextflow.
 
-1. Run the command(s) in each process on sample datasets as a seperate job. For example, this is a job script to run fastqsc. Also, get the jobid
+1. Run the command(s) in each PROCESS on sample datasets as a seperate job. For example, this is a job script to run fastqc.
 ```
 #!/bin/bash
 
@@ -101,17 +101,16 @@ cd ${PBS_O_WORKDIR}
 rm ${SCRATCH}/<file 1>
 rm ${SCRATCH}/<file 2>
 rmdir ${SCRATCH}
-s
 ```
 
-2. Submit your job
+2. Submit your job and save the job id
 
 ```
 qsub submit_fastqc.sh
 ```
 
-3. Run the following to see job stats
+3. Run the following to see job stats from which we know how much RAM and how many cpus are actually used in each PROCESS. 
 
 ```
-qstat -fx <jobid>
+qstat -fx <job id>
 ```
