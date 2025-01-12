@@ -54,53 +54,52 @@ __-s reverse__: The second read has to be on the same strand and the first read 
 
 6. [Deseq2](https://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html)
 
-## Resources request 
+## Resources request
 
 There is a need to know approximately what resources our jobs will need to configure _cpus_ and _memory_ for each PROCESS in Nextflow.
 
-1. Run the command(s) in each PROCESS on sample datasets as a seperate job. For example, this is a job script to run fastqc.
+### Method 1: Submit a seperate job script
+
+1. Run the command(s) in a PROCESS on one sample's pair-end read as a seperate job. For example, this is a job script to map reads (I ran code under /scratch because it is a fast local SSD disks)
 ```
 #!/bin/bash
 
-# Run this as "qsub submit_fastqc.sh"
+# Run this as "qsub submit_mapping.sh"
 
 # Set a name for this run and the resource requirements,
-# 1 CPU, 5 GB memory and 5 minutes wall time.
-#PBS -N test_fastqc
-#PBS -l ncpus=2
-#PBS -l mem=2GB
-#PBS -l walltime=00:10:00
-
-# Send an email when this job aborts, begins or ends.
-#PBS -m fastqc 
-#PBS -M thaoaussie99@gmail.com
+# 8 CPU, 4 GB memory and 40 minutes wall time.
+#PBS -N test_mapping
+#PBS -l ncpus=8
+#PBS -l mem=4GB
+#PBS -l walltime=00:40:00
 
 # Create a unique /scratch directory.
 SCRATCH="/scratch/${USER}_${PBS_JOBID%.*}"
-PBS_O_WORKDIR=<path to input files>
 mkdir ${SCRATCH}
 
-# Change to the intput files path
+# Change to the input files path
 cd ${PBS_O_WORKDIR}
 
 # Copy your input data to this scratch directory.
-cp <file 1> <file 2> ${SCRATCH}
+cp <reads 1> <reads 2> <reference genome> ${SCRATCH}
 
 # Change directory to the scratch directory and run your program.
 cd ${SCRATCH}
 
 # Run your program.
-mkdir fastqc_logs
-fastqc -t 2 -o fastqc_logs -f fastq -q <file 1> <file 2>
+mkdir bowtie2_index
+cd bowtie2_index
+bowtie2-build ../<reference genome> ggal 
+cd .. 
+bowtie2 -p 8 --very-sensitive -x bowtie2_index/ggal -1 <reads 1> -2 <reads 2> -S mapped.sam
+samtools view -S -b mapped.sam > mapped.bam
 
 # Copy output results back to your working directory. 
-mv ${SCRATCH}/fastqc_logs ${PBS_O_WORKDIR}/
+mv ${SCRATCH}/mapped.bam ${PBS_O_WORKDIR}/output/
 
 # Clean up
 cd ${PBS_O_WORKDIR}
-rm ${SCRATCH}/<file 1>
-rm ${SCRATCH}/<file 2>
-rmdir ${SCRATCH}
+rm -rf ${SCRATCH}
 ```
 
 2. Submit your job and save the job id
@@ -109,8 +108,52 @@ rmdir ${SCRATCH}
 qsub submit_fastqc.sh
 ```
 
-3. Run the following to see job stats from which we know how much RAM and how many cpus are actually used in each PROCESS. 
+3. Run the following to see job stats from which we know how much RAM and how many cpus are actually used. 
 
 ```
 qstat -fx <job id>
 ```
+If the resources_used.mem < Resource_List.mem or resources_used.ncpus < Resource_List.ncpus, you should request less memory or cpus. 
+
+### Method 2: Run Nextflow
+
+Alternatively, we can run the Nextflow pipeline on one sample's pair-end reads, then repeat step 2 and 3 in Method 1. 
+
+
+## Run the program
+
+1. Download the sample datasets here, which includes 4 pair-ended datasets - 2 treated and 2 untreated and save to the project directory.
+
+2. Navigate terminal to the project directory.
+
+3. Build apptainer image 
+
+```
+cd apptainerdef
+apptainer build speedx-rnaseq.sif speedx-rnaseq.def
+```
+
+__(Optional)__ To check the if the apptainer works by starting an instance:
+
+```
+apptainer instance start speedx-rnaseq.sif speedx-rnaseq
+```
+
+Then, check if all software are installed by instance shell:
+
+```
+apptainer shell instance://speedx-rnaseq
+```
+
+Once everthing is verified, stop the instance: 
+```
+apptainer instance stop speedx-rnaseq
+```
+
+4. Run the Nextflow pipeline
+
+```
+nextflow run main.nf -profile apptainer
+```
+
+5. Check jobs submitted 
