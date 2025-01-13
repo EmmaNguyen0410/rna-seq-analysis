@@ -171,9 +171,10 @@ With _process.container = '$baseDir/apptainerdef/speedx-rnaseq.sif', process.exe
 
 1. Creates a unique directory in the computing node’s local /tmp or the path assigned by your cluster via the TMPDIR environment variable. Here, I set TMPDIR=/scratch/<some name>
 2. Inside this scratch directory, creates a symlink for each input file required by the job execution. 
-3. Mount the computing node's TMPDIR and current working directories to corresponding directories in the Apptainer container. 
-4. Start an Apptainer container and run the commands in TMPDIR folder of container. Hence, the outputs will appear in TMPDIR of host as well. 
+3. Mounts the computing node's TMPDIR and current working directories to corresponding directories in the Apptainer container. 
+4. Starts an Apptainer container and runs the commands in TMPDIR folder of container. Hence, the outputs will appear in TMPDIR of host as well. 
 5. Copies the output files from TMPDIR into the shared working directory.
+6. Deletes the TMPDIR in the computing node.
 
 ## Resources: 
 
