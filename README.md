@@ -119,6 +119,13 @@ If the resources_used.mem < Resource_List.mem or resources_used.ncpus < Resource
 
 Alternatively, we can run the Nextflow pipeline on one sample's pair-end reads, then repeat step 2 and 3 in Method 1. 
 
+## Tips for effiency 
+
+- Nextflow queueSize directive: The queueSize directive is part of the executor configuration in the nextflow.config file, and defines how many processes are queued at a given time. By default, Nextflow will submit up to 100 jobs at a time for execution. Increase or decrease this setting depending your HPC system quota and throughput. 
+
+- Nextflow scratch directive: A common recommendation is to use the node's local scratch storage as the job working directory to avoid unnecessary use of the network shared file system and achieve better performance.
+
+- Job submission limit: It is recommended that you configure your workflow to specify small, short jobs as using the local executor, leaving the larger and longer running jobs to the slurm executor.
 
 ## Run the program
 
@@ -153,7 +160,23 @@ apptainer instance stop speedx-rnaseq
 4. Run the Nextflow pipeline
 
 ```
-nextflow run main.nf -profile apptainer
+TMPDIR=/scratch/<some name> nextflow run main.nf -profile apptainer
 ```
 
 5. Check jobs submitted 
+
+## Pipeline explanation 
+
+With _process.container = '$baseDir/apptainerdef/speedx-rnaseq.sif', process.executor = 'pbspro', apptainer.enabled = true, process.scratch = true_, Nextflow: 
+
+1. Creates a unique directory in the computing node’s local /tmp or the path assigned by your cluster via the TMPDIR environment variable. Here, I set TMPDIR=/scratch/<some name>
+2. Inside this scratch directory, creates a symlink for each input file required by the job execution. 
+3. Mount the computing node's TMPDIR and current working directories to corresponding directories in the Apptainer container. 
+4. Start an Apptainer container and run the commands in TMPDIR folder of container. Hence, the outputs will appear in TMPDIR of host as well. 
+5. Copies the output files from TMPDIR into the shared working directory.
+
+## Resources: 
+
+https://seqera.io/blog/5-more-tips-for-nextflow-user-on-hpc/
+https://docs.ycrc.yale.edu/clusters-at-yale/guides/nextflow/
+https://seqera.io/blog/5_tips_for_hpc_users/
