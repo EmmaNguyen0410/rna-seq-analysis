@@ -160,21 +160,22 @@ apptainer instance stop speedx-rnaseq
 4. Run the Nextflow pipeline
 
 ```
-TMPDIR=/scratch/<some name> nextflow run main.nf -profile apptainer
+nextflow run main.nf -profile apptainer
 ```
 
 5. Check jobs submitted 
 
 ## Pipeline explanation 
 
-With _process.container = '$baseDir/apptainerdef/speedx-rnaseq.sif', process.executor = 'pbspro', apptainer.enabled = true, process.scratch = true_, Nextflow: 
+With _process.container = '$baseDir/apptainerdef/speedx-rnaseq.sif', process.executor = 'pbspro', apptainer.enabled = true, process.scratch = /scratch/u162557, Nextflow: 
 
-1. Creates a unique directory in the computing node’s local /tmp or the path assigned by your cluster via the TMPDIR environment variable. Here, I set TMPDIR=/scratch/<some name>
-2. Inside this scratch directory, creates a symlink for each input file required by the job execution. 
-3. Mounts the computing node's TMPDIR and current working directories to corresponding directories in the Apptainer container. 
-4. Starts an Apptainer container and runs the commands in TMPDIR folder of container. Hence, the outputs will appear in TMPDIR of host as well. 
-5. Copies the output files from TMPDIR into the shared working directory.
-6. Deletes the TMPDIR in the computing node.
+1. Submits a job to a computing note. 
+2. In the computing note, creates a unique directory whose path is assigned to process.scratch. Here, I set process.scratch=/scratch/u162557.
+3. Inside this scratch directory, creates a symlink for each input file required by the job execution. 
+4. Mounts the computing node's scratch and current working directories to corresponding directories in the Apptainer container. 
+5. Starts an Apptainer container and runs the commands in scratch directory of container. Hence, the outputs will appear in scratch of host as well. 
+6. Move the output files from scratch to the shared working directory.
+7. Deletes the scratch directory in the computing node.
 
 ## Resources: 
 
