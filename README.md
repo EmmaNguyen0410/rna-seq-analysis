@@ -177,8 +177,14 @@ With _process.container = '$baseDir/apptainerdef/speedx-rnaseq.sif', process.exe
 6. Move the output files from scratch to the shared working directory.
 7. Deletes the scratch directory in the computing node.
 
+## To do 
+1. Extract, annotate, visualise DE genes
+2. GO analysis
+3. KEGG path analysis
+
 ## Resources: 
 
 https://seqera.io/blog/5-more-tips-for-nextflow-user-on-hpc/
 https://docs.ycrc.yale.edu/clusters-at-yale/guides/nextflow/
 https://seqera.io/blog/5_tips_for_hpc_users/
+
